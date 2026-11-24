@@ -13,7 +13,7 @@
 
 const CONFIG = {
     gridSize: 3,
-    gameDuration: 9 * 60 * 1000,
+    gameDuration: 10 * 60 * 1000,
     imagePath: "assets/madam-image.jpeg",
     musicPath: "assets/background-music.mp3",
     transitionDuration: 2400,
@@ -1401,7 +1401,7 @@ function restartGame() {
     // Prepare a fresh puzzle.
     prepareNewPuzzle();
 
-    // Start a new nine-minute countdown.
+    // Start a new ten-minute countdown.
     startTimer();
 
     // Resume music if it was not muted.

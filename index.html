@@ -1,0 +1,612 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color" content="#0b0712">
+    <meta name="description" content="A little puzzle made especially for you.">
+
+    <title>A Little Challenge for Disha 🥂</title>
+
+    <!-- Website Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap"
+        rel="stylesheet">
+
+    <!-- Our CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- =========================================
+         BACKGROUND ANIMATION
+         Floating hearts, sparkles and particles
+    ========================================== -->
+
+    <div class="ambient-background" aria-hidden="true">
+        <div class="ambient-glow glow-one"></div>
+        <div class="ambient-glow glow-two"></div>
+        <div class="ambient-glow glow-three"></div>
+    </div>
+
+    <div id="particle-container" aria-hidden="true"></div>
+
+
+    <!-- =========================================
+         OPENING SCREEN
+    ========================================== -->
+
+    <main id="intro-screen" class="screen intro-screen">
+
+        <div class="intro-content">
+
+            <div class="intro-badge">
+                <span class="badge-sparkle">✧</span>
+                A LITTLE GAME FOR YOU 🤗
+                <span class="badge-sparkle">✧</span>
+            </div>
+
+            <div class="intro-heart" aria-hidden="true">
+                ♡
+            </div>
+
+            <h1 class="intro-title">
+                Ready ho...😊<span class="question-dots">?</span>
+                <span class="title-sparkle">💖</span>
+            </h1>
+
+            <p class="intro-subtitle">
+                Then go on, <span class="madam-highlight">Madam ji 😇</span>!
+            </p>
+
+            <p class="intro-description">
+                A tiny challenge, a little fun 🥂
+                and something made just for you 💖
+            </p>
+
+            <button
+                id="start-button"
+                class="start-button"
+                type="button">
+
+                <span class="button-text">CHALO LET'S PLAY 😊</span>
+                <span class="button-heart" aria-hidden="true">♡</span>
+                <span class="button-shine" aria-hidden="true"></span>
+
+            </button>
+
+            <p class="intro-footer">
+                Made with a cup of Tea <span>♡</span>
+            </p>
+
+        </div>
+
+        <div class="intro-bottom-decoration" aria-hidden="true">
+            <span>🥂</span>
+            <span>😇</span>
+            <span>✨</span>
+        </div>
+
+    </main>
+
+
+    <!-- =========================================
+         CINEMATIC TRANSITION OVERLAY
+
+         JavaScript will activate this during
+         the transition from intro to game.
+    ========================================== -->
+
+    <div
+        id="transition-overlay"
+        class="transition-overlay"
+        aria-hidden="true">
+
+        <div class="transition-flash"></div>
+
+        <div class="transition-ring ring-one"></div>
+        <div class="transition-ring ring-two"></div>
+        <div class="transition-ring ring-three"></div>
+
+        <div class="transition-core">
+            <span class="transition-heart">♡</span>
+        </div>
+
+        <div id="fragment-container" class="fragment-container"></div>
+
+        <div class="transition-message">
+            <span class="transition-message-small">A LITTLE CHALLENGE FOR</span>
+            <span class="transition-message-main">Cutu  ✨</span>
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+         GAME SCREEN
+    ========================================== -->
+
+    <main id="game-screen" class="screen game-screen" hidden>
+
+        <!-- Top Bar -->
+
+        <header class="game-header">
+
+            <!-- Original Image Reference -->
+
+            <button
+                id="reference-button"
+                class="reference-button"
+                type="button"
+                aria-label="View the original image">
+
+                <span class="reference-image-frame">
+                    <img
+                        id="reference-image"
+                        src="assets/madam-image.jpeg"
+                        alt="Original picture for the puzzle">
+                </span>
+
+                <span class="reference-info">
+                    <span class="reference-label">THE ORIGINAL</span>
+                    <span class="reference-caption">Little reminder ♡</span>
+                </span>
+
+            </button>
+
+
+            <!-- Timer -->
+
+            <div class="timer-card" id="timer-card">
+
+                <span class="timer-icon" aria-hidden="true">♡</span>
+
+                <div class="timer-information">
+                    <span class="timer-label">TIME LEFT</span>
+
+                    <time
+                        id="timer"
+                        class="timer-value"
+                        datetime="PT9M">
+                        09:00
+                    </time>
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- Game Heading -->
+
+        <section class="game-heading">
+
+            <p class="game-eyebrow">
+                YOUR LITTLE MISSION 😊
+            </p>
+
+            <h2 class="game-title">
+                Solve The Puzzle<span> 😇</span>
+            </h2>
+
+            <p class="game-description">
+                Koi or photo k sath game try krna h ? 🧸
+                Niche photo upload krlo & Enjoy 😊
+            </p>
+
+        </section>
+
+
+        <!-- Puzzle Board -->
+
+        <section class="puzzle-section" aria-label="Sliding picture puzzle">
+
+            <div class="puzzle-outer-frame">
+
+                <div
+                    id="puzzle-board"
+                    class="puzzle-board"
+                    role="group"
+                    aria-label="Three by three sliding image puzzle">
+
+                    <!--
+                        JavaScript will create the nine puzzle cells.
+                        One cell will remain empty.
+                    -->
+
+                </div>
+
+                <div
+                    id="puzzle-sparkles"
+                    class="puzzle-sparkles"
+                    aria-hidden="true">
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Game Statistics -->
+
+        <section class="game-stats" aria-label="Game statistics">
+
+            <div class="stat-card">
+
+                <span class="stat-icon" aria-hidden="true">✧</span>
+
+                <div class="stat-information">
+                    <span class="stat-label">MOVES</span>
+                    <span id="move-count" class="stat-value">0</span>
+                </div>
+
+            </div>
+
+
+            <div class="stat-divider" aria-hidden="true"></div>
+
+
+            <div class="stat-card">
+
+                <span class="stat-icon" aria-hidden="true">♡</span>
+
+                <div class="stat-information">
+                    <span class="stat-label">COMPLETED</span>
+                    <span id="progress-count" class="stat-value">0 / 8</span>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Game Instructions -->
+
+        <p id="game-message" class="game-message" aria-live="polite">
+            One little move at a time, madam ji ✨
+        </p>
+
+        <!-- Game Controls -->
+
+        <footer class="game-controls">
+
+            <!-- Restart the current puzzle -->
+            <button
+                id="restart-button"
+                class="secondary-button"
+                type="button">
+
+                <span aria-hidden="true">↻</span>
+                Start again 👻
+
+            </button>
+
+
+            <!-- Upload a custom image -->
+            <button
+                id="upload-image-button"
+                class="secondary-button"
+                type="button">
+
+                <span aria-hidden="true">✧</span>
+                Choose Your Photo 🥂
+
+            </button>
+
+
+            <button
+                type="button"
+                id="take-photo-button"
+                class="secondary-button">
+
+                <span aria-hidden="true">📷</span>
+                Take a Live Photo
+            </button>
+
+
+
+            <!-- Restore the default image -->
+            <button
+                id="default-image-button"
+                class="secondary-button"
+                type="button"
+                hidden>
+
+                <span aria-hidden="true">↺</span>
+                Play with Original Photo ✨
+
+            </button>
+
+
+            <!-- Hidden image picker -->
+            <input
+                type="file"
+                id="image-upload-input"
+                accept="image/*"
+                hidden>
+
+            
+            <input
+                type="file"
+                id="camera-input"
+                accept="image/*"
+                capture="environment"
+                hidden>
+
+
+            <!-- Background music -->
+            <button
+                id="music-button"
+                class="music-button"
+                type="button"
+                aria-label="Mute background music"
+                aria-pressed="true">
+
+                <span id="music-icon" aria-hidden="true">♫</span>
+                <span id="music-label">Music on</span>
+
+            </button>
+
+        </footer>
+
+
+        <p class="game-footer">
+            Take your time & enjoy <span>😇</span>
+        </p>
+
+
+    </main>
+
+
+    <!-- =========================================
+         ORIGINAL IMAGE PREVIEW
+
+         Opens when the reference thumbnail
+         is clicked.
+    ========================================== -->
+
+    <div
+        id="image-modal"
+        class="modal image-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="image-modal-title"
+        hidden>
+
+        <div class="modal-backdrop" data-close-modal></div>
+
+        <div class="modal-card image-modal-card">
+
+            <button
+                class="modal-close"
+                type="button"
+                data-close-modal
+                aria-label="Close image preview">
+                ×
+            </button>
+
+            <p class="modal-eyebrow">A LITTLE PREVIEW</p>
+
+            <h2 id="image-modal-title" class="modal-title">
+                The original picture 😊
+            </h2>
+
+            <img
+                class="modal-preview-image"
+                src="assets/madam-image.jpeg"
+                alt="Complete original picture">
+
+            <p class="modal-caption">
+                Remember how all the little pieces fit together? ✨
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+         VICTORY SCREEN
+    ========================================== -->
+
+    <div
+        id="victory-modal"
+        class="modal victory-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="victory-title"
+        hidden>
+
+        <div class="modal-backdrop"></div>
+
+        <div class="modal-card victory-card">
+
+            <div class="victory-decoration" aria-hidden="true">
+                ♡ ✧ ♡
+            </div>
+
+            <p class="modal-eyebrow">MISSION ACCOMPLISHED</p>
+
+            <h2 id="victory-title" class="victory-title">
+                You did it, Madam Jii! 🥳
+            </h2>
+
+            <p class="victory-message">
+                Every little piece found its place.
+                Just like that, you solved it! 💗
+            </p>
+
+            <div class="victory-image-frame">
+
+                <img
+                    id="victory-image"
+                    src="assets/madam-image.jpeg"
+                    alt="Completed puzzle picture">
+
+            </div>
+
+            <p class="victory-personal-message">
+                And maybe this little game was just
+                an excuse to make you smile. 🤗
+            </p>
+
+            <p id="final-stats" class="final-stats">
+                Completed with love ✨
+            </p>
+
+            <button
+                id="play-again-button"
+                class="start-button victory-button"
+                type="button">
+
+                <span class="button-text">PLAY AGAIN</span>
+                <span class="button-heart" aria-hidden="true">♡</span>
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+         TIME-UP SCREEN
+    ========================================== -->
+
+    <div
+        id="timeout-modal"
+        class="modal timeout-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="timeout-title"
+        hidden>
+
+        <div class="modal-backdrop"></div>
+
+        <div class="modal-card timeout-card">
+
+            <div class="timeout-decoration" aria-hidden="true">
+                ⏳
+            </div>
+
+            <p class="modal-eyebrow">TIME'S UP</p>
+
+            <h2 id="timeout-title" class="modal-title">
+                Oops, Madam Jii! 😔
+            </h2>
+
+            <p class="timeout-message">
+                The nine minutes flew by!
+                But Ruko, give up krne ki koi zarurat nhi h
+            </p>
+
+            <div class="timeout-actions">
+
+                <button
+                    id="retry-button"
+                    class="start-button"
+                    type="button">
+
+                    <span class="button-text">Ek or baar Try..pls 🥺</span>
+                    <span class="button-heart" aria-hidden="true">♡</span>
+
+                </button>
+
+                <button
+                    id="reveal-button"
+                    class="secondary-button reveal-button"
+                    type="button">
+
+                    Reveal the picture ✨
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+         REVEAL SCREEN
+    ========================================== -->
+
+    <div
+        id="reveal-modal"
+        class="modal reveal-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="reveal-title"
+        hidden>
+
+        <div class="modal-backdrop" data-close-modal></div>
+
+        <div class="modal-card reveal-card">
+
+            <button
+                class="modal-close"
+                type="button"
+                data-close-modal
+                aria-label="Close picture">
+                ×
+            </button>
+
+            <p class="modal-eyebrow">HERE IT IS ♡</p>
+
+            <h2 id="reveal-title" class="modal-title">
+                The complete picture!
+            </h2>
+
+            <img
+                class="modal-preview-image"
+                src="assets/madam-image.jpeg"
+                alt="The complete original picture">
+
+            <p class="modal-caption">
+                Well tried madam ji 🫂 , koi nhii 😊
+            </p>
+
+            <button
+                id="reveal-play-again-button"
+                class="start-button"
+                type="button">
+
+                <span class="button-text">TRY AGAIN?</span>
+                <span class="button-heart" aria-hidden="true">♡</span>
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+         BACKGROUND MUSIC
+
+         JavaScript will start playback after the
+         player clicks the Let's Play button.
+    ========================================== -->
+
+    <audio
+        id="background-music"
+        src="assets/background-music.mp3"
+        loop
+        preload="auto">
+    </audio>
+
+
+    <!-- Our JavaScript -->
+    <script src="script.js"></script>
+
+</body>
+
+</html>

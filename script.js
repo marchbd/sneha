@@ -441,6 +441,81 @@ function runCinematicTransition(showPreviewAfterTransition = false) {
 }
 
 
+function runShatterRevealTransition() {
+
+    const previewCard = elements.previewScreen.querySelector(".preview-card");
+    const imageFrame = elements.previewScreen.querySelector(".preview-image-frame");
+
+    // Build the next screen before the reveal so nothing loads into a blank page.
+    prepareNewPuzzle();
+    elements.gameScreen.hidden = false;
+    elements.gameScreen.classList.remove("puzzle-reveal-enter");
+    void elements.gameScreen.offsetWidth;
+
+    // The preview image becomes a grid of glass-like fragments.
+    const rect = imageFrame.getBoundingClientRect();
+    const sourceImage = elements.previewImage;
+    const shardLayer = document.createElement("div");
+    shardLayer.className = "shatter-layer";
+    shardLayer.setAttribute("aria-hidden", "true");
+    shardLayer.style.width = rect.width + "px";
+    shardLayer.style.height = rect.height + "px";
+    shardLayer.style.left = rect.left + "px";
+    shardLayer.style.top = rect.top + "px";
+
+    const columns = 4;
+    const rows = 4;
+    const shardWidth = 100 / columns;
+    const shardHeight = 100 / rows;
+
+    for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < columns; col++) {
+            const shard = document.createElement("div");
+            shard.className = "shatter-shard";
+            shard.style.left = (col * shardWidth) + "%";
+            shard.style.top = (row * shardHeight) + "%";
+            shard.style.width = shardWidth + "%";
+            shard.style.height = shardHeight + "%";
+            shard.style.backgroundImage = 'url("' + sourceImage.src + '")';
+            shard.style.backgroundSize = (columns * 100) + "% " + (rows * 100) + "%";
+            shard.style.backgroundPosition = (col * 100 / (columns - 1)) + "% " + (row * 100 / (rows - 1)) + "%";
+            shard.style.setProperty("--shard-x", ((col - 1.5) * 95 + (Math.random() * 45 - 22)) + "px");
+            shard.style.setProperty("--shard-y", ((row - 1.5) * 95 + (Math.random() * 45 - 22)) + "px");
+            shard.style.setProperty("--shard-rotate", (Math.random() * 100 - 50) + "deg");
+            shard.style.animationDelay = (Math.random() * 90) + "ms";
+            shardLayer.appendChild(shard);
+        }
+    }
+
+    document.body.appendChild(shardLayer);
+    elements.previewScreen.classList.add("preview-screen-shattering");
+    shardLayer.classList.add("shatter-layer-active");
+
+    // A quick light sweep bridges the shatter and the puzzle reveal.
+    const flash = document.createElement("div");
+    flash.className = "reveal-flash";
+    document.body.appendChild(flash);
+    requestAnimationFrame(() => flash.classList.add("reveal-flash-active"));
+
+    window.setTimeout(() => {
+        elements.previewScreen.hidden = true;
+        elements.gameScreen.classList.add("puzzle-reveal-enter");
+        elements.gameScreen.classList.add("puzzle-reveal-active");
+
+        startTimer();
+        gameStarted = true;
+
+        window.setTimeout(() => {
+            shardLayer.remove();
+            flash.remove();
+            elements.previewScreen.classList.remove("preview-screen-shattering");
+            elements.gameScreen.classList.remove("puzzle-reveal-enter", "puzzle-reveal-active");
+            transitionRunning = false;
+        }, 650);
+    }, 520);
+
+}
+
 function showImagePreviewStage() {
 
     stopTimer();
@@ -504,7 +579,7 @@ function beginPuzzleFromPreview() {
     }
 
     transitionRunning = true;
-    runCinematicTransition(false);
+    runShatterRevealTransition();
 
 }
 

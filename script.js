@@ -31,7 +31,7 @@ const elements = {
 
     previewScreen: document.getElementById("preview-screen"),
     previewImage: document.getElementById("preview-image"),
-    shuffleStartButton: document.getElementById("shuffle-start-button"),
+    previewCountdown: document.getElementById("preview-countdown"),
 
     transitionOverlay: document.getElementById("transition-overlay"),
     fragmentContainer: document.getElementById("fragment-container"),
@@ -183,14 +183,7 @@ function attachEventListeners() {
     elements.startButton.addEventListener(
         "click",
         startExperience
-    );
-
-    elements.shuffleStartButton.addEventListener(
-        "click",
-        beginPuzzleFromPreview
-    );
-
-    // Open the image picker.
+    );// Open the image picker.
     elements.uploadImageButton.addEventListener("click", () => {
         elements.imageUploadInput.click();
     });
@@ -429,7 +422,6 @@ function runCinematicTransition(showPreviewAfterTransition = false) {
         elements.gameScreen.hidden = false;
 
         elements.startButton.disabled = false;
-        elements.shuffleStartButton.disabled = false;
 
         prepareNewPuzzle();
         startTimer();
@@ -459,9 +451,36 @@ function showImagePreviewStage() {
     elements.transitionOverlay.classList.remove("active");
     elements.previewScreen.hidden = false;
 
+    startPreviewCountdown();
+
     timeRemaining = CONFIG.gameDuration;
     deadline = null;
     updateTimerDisplay();
+
+}
+
+
+let previewCountdownInterval = null;
+
+function startPreviewCountdown() {
+
+    if (previewCountdownInterval !== null) {
+        window.clearInterval(previewCountdownInterval);
+    }
+
+    let secondsLeft = 5;
+    elements.previewCountdown.textContent = secondsLeft;
+
+    previewCountdownInterval = window.setInterval(() => {
+        secondsLeft -= 1;
+        elements.previewCountdown.textContent = secondsLeft;
+
+        if (secondsLeft <= 0) {
+            window.clearInterval(previewCountdownInterval);
+            previewCountdownInterval = null;
+            beginPuzzleFromPreview();
+        }
+    }, 1000);
 
 }
 
@@ -472,10 +491,12 @@ function beginPuzzleFromPreview() {
         return;
     }
 
-    transitionRunning = true;
-    elements.shuffleStartButton.disabled = true;
+    if (previewCountdownInterval !== null) {
+        window.clearInterval(previewCountdownInterval);
+        previewCountdownInterval = null;
+    }
 
-    // Reuse the existing transition animation before showing the puzzle.
+    transitionRunning = true;
     runCinematicTransition(false);
 
 }

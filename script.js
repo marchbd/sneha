@@ -443,14 +443,13 @@ function runCinematicTransition(showPreviewAfterTransition = false) {
 
 function runShatterRevealTransition() {
 
-    const previewCard = elements.previewScreen.querySelector(".preview-card");
     const imageFrame = elements.previewScreen.querySelector(".preview-image-frame");
 
-    // Build the next screen before the reveal so nothing loads into a blank page.
+    // Prepare the board, then keep it hidden behind the preview until the reveal.
     prepareNewPuzzle();
+    elements.gameScreen.classList.remove("puzzle-reveal-enter", "puzzle-reveal-active");
+    elements.gameScreen.classList.add("shatter-reveal-mode", "puzzle-reveal-enter");
     elements.gameScreen.hidden = false;
-    elements.gameScreen.classList.remove("puzzle-reveal-enter");
-    void elements.gameScreen.offsetWidth;
 
     // The preview image becomes a grid of glass-like fragments.
     const rect = imageFrame.getBoundingClientRect();
@@ -499,7 +498,9 @@ function runShatterRevealTransition() {
 
     window.setTimeout(() => {
         elements.previewScreen.hidden = true;
-        elements.gameScreen.classList.add("puzzle-reveal-enter");
+
+        // Commit the hidden start state before starting the reveal animation.
+        void elements.gameScreen.offsetWidth;
         elements.gameScreen.classList.add("puzzle-reveal-active");
 
         startTimer();
@@ -510,8 +511,9 @@ function runShatterRevealTransition() {
             flash.remove();
             elements.previewScreen.classList.remove("preview-screen-shattering");
             elements.gameScreen.classList.remove("puzzle-reveal-enter", "puzzle-reveal-active");
+            // Keep the reveal's final visual state; don't fall back to gameEnter.
             transitionRunning = false;
-        }, 650);
+        }, 680);
     }, 520);
 
 }

@@ -29,6 +29,10 @@ const elements = {
     introScreen: document.getElementById("intro-screen"),
     startButton: document.getElementById("start-button"),
 
+    previewScreen: document.getElementById("preview-screen"),
+    previewImage: document.getElementById("preview-image"),
+    shuffleStartButton: document.getElementById("shuffle-start-button"),
+
     transitionOverlay: document.getElementById("transition-overlay"),
     fragmentContainer: document.getElementById("fragment-container"),
 
@@ -181,6 +185,12 @@ function attachEventListeners() {
         startExperience
     );
 
+    // Continue to the puzzle only after the full image preview.
+    elements.shuffleStartButton.addEventListener(
+        "click",
+        beginPuzzleFromPreview
+    );
+
     // Open the image picker.
     elements.uploadImageButton.addEventListener("click", () => {
         elements.imageUploadInput.click();
@@ -286,15 +296,47 @@ async function startExperience() {
         return;
     }
 
-    transitionRunning = true;
-
-    // Prevent accidental double-clicks.
-    elements.startButton.disabled = true;
-
-    // Start music from the user's click.
+    // Start music from the user's click, then preview the exact image
+    // that will be shuffled into the puzzle.
     await startMusic();
+    showImagePreviewStage();
 
-    // Begin the cinematic transition.
+}
+
+
+function showImagePreviewStage() {
+
+    stopTimer();
+    gameStarted = false;
+    gameOver = false;
+    transitionRunning = false;
+
+    // Use the currently selected image (default, upload, or camera).
+    elements.previewImage.src = currentImagePath;
+    elements.referenceImage.src = currentImagePath;
+
+    elements.introScreen.hidden = true;
+    elements.gameScreen.hidden = true;
+    elements.transitionOverlay.hidden = true;
+    elements.transitionOverlay.classList.remove("active");
+    elements.previewScreen.hidden = false;
+
+    // Reset the countdown without starting it.
+    timeRemaining = CONFIG.gameDuration;
+    deadline = null;
+    updateTimerDisplay();
+
+}
+
+
+function beginPuzzleFromPreview() {
+
+    if (transitionRunning) {
+        return;
+    }
+
+    transitionRunning = true;
+    elements.shuffleStartButton.disabled = true;
     runCinematicTransition();
 
 }
@@ -398,6 +440,7 @@ function runCinematicTransition() {
     window.setTimeout(() => {
 
         elements.introScreen.hidden = true;
+        elements.previewScreen.hidden = true;
 
     }, 350);
 
@@ -411,8 +454,9 @@ function runCinematicTransition() {
 
         elements.gameScreen.hidden = false;
 
-        // Remove the opening button's disabled state.
+        // Reset both buttons for the next play-through.
         elements.startButton.disabled = false;
+        elements.shuffleStartButton.disabled = false;
 
         // Prepare a fresh, solvable puzzle.
         prepareNewPuzzle();
@@ -1287,19 +1331,11 @@ function handleCustomImageUpload(event) {
         customImageUrl = newImageUrl;
         currentImagePath = customImageUrl;
 
-        // Update the reference image.
-        elements.referenceImage.src = currentImagePath;
-
         // Show the button for restoring the original image.
         elements.defaultImageButton.hidden = false;
 
-        // Create a fresh puzzle using the uploaded photo.
-        prepareNewPuzzle();
-
-        // Restart the timer if the game has already started.
-        if (gameStarted) {
-            startTimer();
-        }
+        // Preview this exact custom photo before it is shuffled.
+        showImagePreviewStage();
 
         elements.imageUploadInput.value = "";
         elements.cameraInput.value = "";
@@ -1323,7 +1359,7 @@ function restoreDefaultImage() {
         customImageUrl = null;
     }
 
-    // Restore the original image.
+    // Restore the original image and preview it before shuffling.
     currentImagePath = CONFIG.imagePath;
     elements.referenceImage.src = currentImagePath;
 
@@ -1333,13 +1369,7 @@ function restoreDefaultImage() {
     // Clear the file input.
     elements.imageUploadInput.value = "";
 
-    // Create a fresh puzzle with the original photo.
-    prepareNewPuzzle();
-
-    // Restart the timer if the game has already started.
-    if (gameStarted) {
-        startTimer();
-    }
+    showImagePreviewStage();
 }
 
 

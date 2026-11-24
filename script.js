@@ -185,7 +185,6 @@ function attachEventListeners() {
         startExperience
     );
 
-    // Continue to the puzzle only after the full image preview.
     elements.shuffleStartButton.addEventListener(
         "click",
         beginPuzzleFromPreview
@@ -296,48 +295,16 @@ async function startExperience() {
         return;
     }
 
-    // Start music from the user's click, then preview the exact image
-    // that will be shuffled into the puzzle.
-    await startMusic();
-    showImagePreviewStage();
-
-}
-
-
-function showImagePreviewStage() {
-
-    stopTimer();
-    gameStarted = false;
-    gameOver = false;
-    transitionRunning = false;
-
-    // Use the currently selected image (default, upload, or camera).
-    elements.previewImage.src = currentImagePath;
-    elements.referenceImage.src = currentImagePath;
-
-    elements.introScreen.hidden = true;
-    elements.gameScreen.hidden = true;
-    elements.transitionOverlay.hidden = true;
-    elements.transitionOverlay.classList.remove("active");
-    elements.previewScreen.hidden = false;
-
-    // Reset the countdown without starting it.
-    timeRemaining = CONFIG.gameDuration;
-    deadline = null;
-    updateTimerDisplay();
-
-}
-
-
-function beginPuzzleFromPreview() {
-
-    if (transitionRunning) {
-        return;
-    }
-
     transitionRunning = true;
-    elements.shuffleStartButton.disabled = true;
-    runCinematicTransition();
+
+    // Prevent accidental double-clicks.
+    elements.startButton.disabled = true;
+
+    // Start music from the user's click.
+    await startMusic();
+
+    // Keep the original cinematic animation, then show the image preview.
+    runCinematicTransition(true);
 
 }
 
@@ -429,7 +396,7 @@ function updateMusicButton() {
    9. CINEMATIC TRANSITION
 ========================================= */
 
-function runCinematicTransition() {
+function runCinematicTransition(showPreviewAfterTransition = false) {
 
     elements.transitionOverlay.classList.add("active");
 
@@ -449,26 +416,67 @@ function runCinematicTransition() {
     window.setTimeout(() => {
 
         elements.transitionOverlay.classList.remove("active");
-
         elements.transitionOverlay.hidden = true;
 
+        if (showPreviewAfterTransition) {
+            // The original opening animation finishes before the photo is shown.
+            showImagePreviewStage();
+            return;
+        }
+
+        // The player has confirmed the preview; now reveal the puzzle.
+        elements.previewScreen.hidden = true;
         elements.gameScreen.hidden = false;
 
-        // Reset both buttons for the next play-through.
         elements.startButton.disabled = false;
         elements.shuffleStartButton.disabled = false;
 
-        // Prepare a fresh, solvable puzzle.
         prepareNewPuzzle();
-
-        // Start the timer.
         startTimer();
 
         gameStarted = true;
-
         transitionRunning = false;
 
     }, CONFIG.transitionDuration);
+
+}
+
+
+function showImagePreviewStage() {
+
+    stopTimer();
+    gameStarted = false;
+    gameOver = false;
+    transitionRunning = false;
+
+    // Preview the exact selected image: default, uploaded, or camera photo.
+    elements.previewImage.src = currentImagePath;
+    elements.referenceImage.src = currentImagePath;
+
+    elements.introScreen.hidden = true;
+    elements.gameScreen.hidden = true;
+    elements.transitionOverlay.hidden = true;
+    elements.transitionOverlay.classList.remove("active");
+    elements.previewScreen.hidden = false;
+
+    timeRemaining = CONFIG.gameDuration;
+    deadline = null;
+    updateTimerDisplay();
+
+}
+
+
+function beginPuzzleFromPreview() {
+
+    if (transitionRunning) {
+        return;
+    }
+
+    transitionRunning = true;
+    elements.shuffleStartButton.disabled = true;
+
+    // Reuse the existing transition animation before showing the puzzle.
+    runCinematicTransition(false);
 
 }
 
@@ -1334,7 +1342,7 @@ function handleCustomImageUpload(event) {
         // Show the button for restoring the original image.
         elements.defaultImageButton.hidden = false;
 
-        // Preview this exact custom photo before it is shuffled.
+        // Preview the selected custom photo before making its puzzle.
         showImagePreviewStage();
 
         elements.imageUploadInput.value = "";
@@ -1359,7 +1367,7 @@ function restoreDefaultImage() {
         customImageUrl = null;
     }
 
-    // Restore the original image and preview it before shuffling.
+    // Restore the original image.
     currentImagePath = CONFIG.imagePath;
     elements.referenceImage.src = currentImagePath;
 
@@ -1369,6 +1377,7 @@ function restoreDefaultImage() {
     // Clear the file input.
     elements.imageUploadInput.value = "";
 
+    // Preview the restored original photo before making its puzzle.
     showImagePreviewStage();
 }
 

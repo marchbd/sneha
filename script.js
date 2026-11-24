@@ -391,43 +391,50 @@ function updateMusicButton() {
 
 function runCinematicTransition(showPreviewAfterTransition = false) {
 
+    // Re-enable the overlay because it is reused for both transitions.
+    elements.transitionOverlay.hidden = false;
+    elements.transitionOverlay.classList.remove("active");
+
+    // Restart the CSS animations cleanly on every use.
+    void elements.transitionOverlay.offsetWidth;
     elements.transitionOverlay.classList.add("active");
 
     // Create particles that burst out from the center.
     createTransitionFragments();
 
-    // Hide the opening screen after the transition begins.
+    // Hide the previous screen only after the overlay has covered it.
     window.setTimeout(() => {
-
         elements.introScreen.hidden = true;
         elements.previewScreen.hidden = true;
-
     }, 350);
 
-
-    // Reveal the game after the cinematic animation.
+    // Prepare the next screen while the cinematic overlay covers the change.
     window.setTimeout(() => {
 
-        elements.transitionOverlay.classList.remove("active");
-        elements.transitionOverlay.hidden = true;
-
         if (showPreviewAfterTransition) {
-            // The original opening animation finishes before the photo is shown.
+            elements.transitionOverlay.classList.remove("active");
             showImagePreviewStage();
+
+            window.setTimeout(() => {
+                elements.transitionOverlay.hidden = true;
+            }, 600);
             return;
         }
 
-        // The player has confirmed the preview; now reveal the puzzle.
-        elements.previewScreen.hidden = true;
+        prepareNewPuzzle();
         elements.gameScreen.hidden = false;
-
         elements.startButton.disabled = false;
 
-        prepareNewPuzzle();
         startTimer();
-
         gameStarted = true;
-        transitionRunning = false;
+
+        // Fade into the ready puzzle instead of showing an empty gap.
+        elements.transitionOverlay.classList.remove("active");
+
+        window.setTimeout(() => {
+            elements.transitionOverlay.hidden = true;
+            transitionRunning = false;
+        }, 600);
 
     }, CONFIG.transitionDuration);
 

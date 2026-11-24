@@ -443,6 +443,7 @@ img {
     background: #08050e;
     opacity: 0;
     pointer-events: none;
+    transition: opacity 600ms cubic-bezier(.22, .68, 0, 1);
 }
 
 .transition-overlay.active {
